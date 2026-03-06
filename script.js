@@ -29,13 +29,10 @@ function loadTasks() {
 function toggleTask(button) {
   const listItem = button.closest("li");
   const status = listItem.querySelector(".status");
-  const taskText = listItem.querySelector(".main-val")?.textContent.trim();
+  const taskText = listItem.querySelector(".main-val").textContent.trim();
 
   const task = tasks.find((t) => t.text === taskText);
-  if (!task) {
-    console.error("Task not found:", taskText);
-    return;
-  }
+  if (!task) return;
 
   task.completed = !task.completed;
 
@@ -55,13 +52,10 @@ function toggleTask(button) {
 function toggleGoal(button) {
   const listItem = button.closest("li");
   const status = listItem.querySelector(".status");
-  const goalText = listItem.querySelector(".main-val")?.textContent.trim();
+  const goalText = listItem.querySelector(".main-val").textContent.trim();
 
   const goal = goals.find((t) => t.text === goalText);
-  if (!goal) {
-    console.error("Goal not found:", goalText);
-    return;
-  }
+  if (!goal) return;
 
   goal.completed = !goal.completed;
 
@@ -79,8 +73,9 @@ function toggleGoal(button) {
 }
 
 function deleteTask(button) {
-  const listItem = button.parentElement.parentElement;
-  const taskText = listItem.querySelector(".main-val")?.textContent.trim();
+  const listItem = button.closest("li");
+  const taskText = listItem.querySelector(".main-val").textContent.trim();
+
   tasks = tasks.filter((task) => task.text !== taskText);
   listItem.remove();
 
@@ -88,8 +83,8 @@ function deleteTask(button) {
 }
 
 function deleteGoal(button) {
-  const listItem = button.parentElement.parentElement;
-  const goalText = listItem.querySelector(".main-val")?.textContent.trim();
+  const listItem = button.closest("li");
+  const goalText = listItem.querySelector(".main-val").textContent.trim();
 
   goals = goals.filter((goal) => goal.text !== goalText);
   listItem.remove();
@@ -113,6 +108,7 @@ function addTask() {
 
   tasks.push(newTask);
   addTaskToDOM(taskText, newTask.completed);
+
   input.value = "";
   saveTasks();
 }
@@ -132,54 +128,62 @@ function addGoal() {
   };
 
   goals.push(newGoal);
-  addGoalToDOM(goalText, goalText.completed);
+  addGoalToDOM(goalText, newGoal.completed);
+
   input.value = "";
   saveGoals();
 }
 
 function addTaskToDOM(taskText, completed) {
   const todoList = document.getElementById("todoList");
+
   const li = document.createElement("li");
+
   li.innerHTML = `
-        <p class="main-val">${taskText}</p>
-        <h3 class="status ${completed ? "completed" : "pending"}">${
-    completed ? "Completed" : "Pending"
-  }</h3>
-        <div class="btns">
-            <button class="tick" onclick="toggleTask(this)">
-                <span class="material-icons">check</span>
-            </button>
-            <button class="delete" onclick="deleteTask(this)">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-    `;
+    <p class="main-val">${taskText}</p>
+    <h3 class="status ${completed ? "completed" : "pending"}">
+      ${completed ? "Completed" : "Pending"}
+    </h3>
+    <div class="btns">
+      <button class="tick" onclick="toggleTask(this)">
+        <span class="material-icons">check</span>
+      </button>
+      <button class="delete" onclick="deleteTask(this)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  `;
+
   todoList.appendChild(li);
 }
 
 function addGoalToDOM(goalText, completed) {
   const goalList = document.getElementById("goalList");
+
   const li = document.createElement("li");
+
   li.innerHTML = `
-        <p class="main-val">${goalText}</p>
-        <h3 class="status ${completed ? "completed" : "pending"}">${
-    completed ? "Completed" : "Pending"
-  }</h3>
-        <div class="btns">
-            <button class="tick" onclick="toggleGoal(this)">
-                <span class="material-icons">check</span>
-            </button>
-            <button class="delete" onclick="deleteGoal(this)">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-    `;
+    <p class="main-val">${goalText}</p>
+    <h3 class="status ${completed ? "completed" : "pending"}">
+      ${completed ? "Completed" : "Pending"}
+    </h3>
+    <div class="btns">
+      <button class="tick" onclick="toggleGoal(this)">
+        <span class="material-icons">check</span>
+      </button>
+      <button class="delete" onclick="deleteGoal(this)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  `;
+
   goalList.appendChild(li);
 }
 
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
+
 function saveGoals() {
   localStorage.setItem("goals", JSON.stringify(goals));
 }
